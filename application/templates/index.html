@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% for comment in comments %}
+    <div><p>{{ comment.timestamp.humanize(locale='zh_cn') }}, {{ comment.user.username }} votes <<{{ comment.book.bookname }}>> score [{{ comment.book.bookname }}]: <b>{{ comment.body }}</b></p></div>
+    {% endfor %}
+{% endblock %}
