@@ -48,3 +48,8 @@ def register():
         flash('恭喜，您已注册成功!')
         return redirect(url_for('login'))
     return render_template('register.html', title='注册', form=form)
+
+@app.route('/user/<username>')
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user=user)

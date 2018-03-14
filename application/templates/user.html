@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table>
+        <tr valign="top">
+            <td><img src="{{ user.get_avatar(128) }}"></td>
+            <td><h1>User: {{ user.username }}</h1></td>
+        </tr>
+    </table>
+    <hr>
+    {% for comment in user.comments %}
+    <p>
+    {{ comment.timestamp.humanize(locale='zh_cn') }}, {{ comment.user.username }} 评价了 《{{ comment.book.bookname }}》 分数 [{{ comment.score }}]: <b>{{ comment.body }}</b></p>
+    </p>
+    {% endfor %}
+{% endblock %}
