@@ -1,16 +1,18 @@
 from application import app, db
 from flask import render_template, flash, redirect, url_for, request
 from application.forms import LoginForm, RegistrationForm
-from application.models import User
+from application.models import User, Comment
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+import arrow
 
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
-    return render_template('index.html', title='首页', comments=current_user.comments)
+    page = request.args.get('page', 1, type=int)
+    pagination = Comment.query.paginate(page, 10, False)
+    return render_template('index.html', title='首页', comments=pagination.items, pagination=pagination)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -32,7 +34,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    flash('登出成功！')
+    flash('登出成功！', 'is-success')
     return redirect(url_for('index'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -53,3 +55,10 @@ def register():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
+
+
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = arrow.utcnow()
+        db.session.commit()

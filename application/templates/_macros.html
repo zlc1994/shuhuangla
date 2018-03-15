@@ -1,0 +1,42 @@
+{% macro pagination_widget(pagination, endpoint) %}
+<nav class="pagination" role="navigation" aria-label="pagination">
+    <a class="pagination-previous" {% if not pagination.has_prev %}disabled{% endif %} href="{{ url_for(endpoint, page=pagination.page-1, **kwargs) }}">
+        上一页
+    </a>
+    <a class="pagination-next" {% if not pagination.has_next %}disabled{% endif %} href="{{ url_for(endpoint, page=pagination.page+1, **kwargs) }}">
+        下一页
+    </a>
+    <ul class="pagination-list">
+    {% for p in pagination.iter_pages() %}
+        {% if p %}
+            {% if p == pagination.page %}
+            <li>
+            <a class="pagination-link is-current" href="{{ url_for(endpoint, page=p, **kwargs) }}">{{ p }}</a>
+            </li>
+            {% else %}
+            <li>
+            <a class="pagination-link"  href="{{ url_for(endpoint, page=p, **kwargs) }}">{{ p }}</a>
+            </li>
+            {% endif %}
+        {% else %}
+        <li>
+            <a class="pagination-link"  disabled href="#">&hellip;</a>
+        </li>       
+        {% endif %}
+    {% endfor %}
+    </ul>
+</nav>
+{% endmacro %}
+
+{% macro render_star(score) %}
+  {% for i in range(score) %}
+  <span class="icon is-small">
+  <i class="fas fa-star"></i>
+  </span>
+  {% endfor %}
+  {% for i in range(5-score) %}
+  <span class="icon is-small">
+  <i class="far fa-star"></i>
+  </span>
+  {% endfor %}
+{% endmacro %}

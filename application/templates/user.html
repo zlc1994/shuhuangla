@@ -4,7 +4,13 @@
     <table>
         <tr valign="top">
             <td><img src="{{ user.get_avatar(128) }}"></td>
-            <td><h1>User: {{ user.username }}</h1></td>
+            <td>
+                <h1>User: {{ user.username }}</h1>
+                <p>书荒了第 {{ user.id }} 号会员</p>
+                <p>加入时间: {{ user.join_time }}</p>
+                <p>最近登入: {{ user.last_seen.humanize(locale='zh_cn') }}</p>
+                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+            </td>
         </tr>
     </table>
     <hr>

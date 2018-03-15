@@ -1,0 +1,13 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    {% for category, message in messages %}
+    <div class="columns"></div>
+    <div class="message {{ category }} is-one-quarter-desktop" onclick="$(this).slideUp('fast')">
+        <div class="message-body">
+        {{ message }}
+        </div>
+    </div>
+    </div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
