@@ -1,6 +1,6 @@
 from application import app, db
 from flask import render_template, flash, redirect, url_for, request
-from application.forms import LoginForm, RegistrationForm
+from application.forms import LoginForm, RegistrationForm, SettingForm
 from application.models import User, Comment
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -62,3 +62,15 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = arrow.utcnow()
         db.session.commit()
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    form = SettingForm()
+    if form.validate_on_submit():
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+    elif request.method == 'GET':
+        form.about_me.data = current_user.about_me
+    return render_template('settings.html', form=form)    
