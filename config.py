@@ -9,3 +9,4 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'mysql+pymysql://zlc:1@localhost/shuhuang?charset=utf8'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    BOOK_INFO = os.path.join(basedir, 'items.json')

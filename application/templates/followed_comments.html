@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-one-fifths"></div>
+    <div class="column is-one-fifths">
+            <div class="box">
+                {% if current_user.is_authenticated %}
+                <div class="media">
+                    <figure class="media-left">
+                        <img src="{{ current_user.get_avatar(48) }}">
+                    </figure>
+                    <div class="media-content">
+                        <strong>{{ current_user.username }}</strong>
+                    </div>
+                </div>
+                <nav class="level is-mobile">
+                    <div class="level-item has-text-centered">
+                        <div>
+                        <p class="heading">评论</p>
+                        <a class="title" href="{{ url_for('user', username=current_user.username) }}">{{ current_user.comments.count() }}</a>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                        <p class="heading">关注</p>
+                        <a class="title" href="{{ url_for('followed', username=current_user.username) }}">{{ current_user.followed.count() }}</a>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                        <p class="heading">粉丝</p>
+                        <a class="title" href="{{ url_for('followers', username=current_user.username) }}">{{ current_user.followers.count() }}</a>
+                        </div>
+                    </div>
+                </nav>
+                {% else %}
+                <div class="has-text-centered">
+                <p class="is-large">书荒啦——推荐你喜欢的小说</p>
+                <p><a class="button" href="{{ url_for('register') }}">注册</a></p>
+                <p class="is-small">已注册用户？<a href="{{ url_for('login') }}">登入</a></p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    <div class="column is-two-fifths">
+        <navbar class="navbar has-shadow">
+                <div class="navbar-tabs">
+                    <a class="navbar-item is-tab" href="{{ url_for('index') }}">
+                        最新评论
+                    </a>
+                    <a class="navbar-item is-tab is-active" href="{{ url_for('followed_comments') }}">
+                        我的关注
+                    </a>
+                    <a class="navbar-item is-tab" href="{{ url_for('allbooks') }}" >
+                        所有小说
+                    </a>
+                </div>
+        </navbar>
+        <div class="box">
+                {% for comment in comments %}
+                    <article class="media">
+                        <div class="media-left">
+                            <figure class="image is-64x64">
+                                <img src="{{ comment.user.get_avatar(64) }}" alt="Image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <div class="content">
+                                <p>
+                                <a href="{{ url_for('user', username=comment.user.username) }}"><strong>{{ comment.user.username }}</strong></a> 
+                                    <small> 评价了 <a href="{{ url_for('book', book_id=comment.book.id) }}">《{{ comment.book.bookname }}》</a></small>
+                                <br>
+                                {{ macros.render_star(comment.score) }}
+                                <br>
+                                {{ comment.body }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="media-right">
+                          <small>{{ comment.timestamp.humanize(locale='zh_cn') }}</small>
+                        </div>
+                    </article>
+                {% endfor %}
+                <br>
+                {{ macros.pagination_widget(pagination, 'followed_comments') }}
+                </div>
+    </div>
+    <div class="column is-one-fifths"></div>
+</div>
+{% endblock %}

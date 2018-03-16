@@ -41,6 +41,7 @@
             </div>
         </div>
         <navbar class="navbar has-shadow">
+            <div class="contanier">
             <div class="navbar-tabs">
                 <a class="navbar-item is-tab is-active" href="{{ url_for('user', username=user.username) }}">
                     {{ user.username }} 的所有评论( {{ user.comments.count() }} )
@@ -52,9 +53,36 @@
                     粉丝 ( {{ user.followers.count() }} )
                 </a>
             </div>
+            </div>
         </navbar>
-        {% include "_comments.html" %}
-        {{ macros.pagination_widget(pagination, 'user', username=user.username) }}
+        <div class="box">
+                {% for comment in comments %}
+                    <article class="media">
+                        <div class="media-left">
+                            <figure class="image is-64x64">
+                                <img src="{{ comment.user.get_avatar(64) }}" alt="Image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <div class="content">
+                                <p>
+                                <a href="{{ url_for('user', username=comment.user.username) }}"><strong>{{ comment.user.username }}</strong></a> 
+                                    <small> 评价了 <a href="{{ url_for('book', book_id=comment.book.id) }}">《{{ comment.book.bookname }}》</a></small>
+                                <br>
+                                {{ macros.render_star(comment.score) }}
+                                <br>
+                                {{ comment.body }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="media-right">
+                          <small>{{ comment.timestamp.humanize(locale='zh_cn') }}</small>
+                        </div>
+                    </article>
+                {% endfor %}
+                <br>
+                {{ macros.pagination_widget(pagination, 'user', username=username) }}
+        </div>
     </div>
     </div>
 </div>

@@ -5,3 +5,28 @@
 body {
     background-color: #e2e2e2;
 }
+
+.navbar-tabs {
+    background-color: white;
+}
+
+.cover {
+    width: 144px;
+    height: 192px;
+}
+
+.intro {
+    height:144px;
+    overflow:hidden;
+}
+
+@media screen and (max-width: 600px) {
+  .cover {
+    width:94.5px;
+    height:126px;
+  }
+  .intro {
+    height:90px;
+    overflow:hidden;
+  }
+}

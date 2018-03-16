@@ -1,9 +1,12 @@
 from application import db, login
+from config import Config
 import arrow
 from sqlalchemy_utils import ArrowType
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5
+import json
+import re
 
 
 followers = db.Table('followers',
@@ -52,16 +55,74 @@ class User(UserMixin, db.Model):
     def is_following(self, user):
         return self.followed.filter(
             followers.c.followed_id == user.id).count() > 0
+    
+    def followed_comments(self):
+        return Comment.query.join(
+            followers, (followers.c.followed_id == Comment.user_id)).filter(
+                followers.c.follower_id == self.id).order_by(
+                    Comment.timestamp.desc())
+    
+    
 
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bookname = db.Column(db.String(64), index=True)
     author = db.Column(db.String(64), index=True)
+    tag = db.Column(db.String(64), index=True)
+    book_id = db.Column(db.String(64), index=True)
+    words = db.Column(db.Integer)
+    chapters = db.Column(db.Integer)
+    cover = db.Column(db.Text())
+    pc_url = db.Column(db.Text())
+    m_url = db.Column(db.Text())
+    source = db.Column(db.String(64))
+    intro = db.Column(db.Text())
+    last_update = db.Column(ArrowType, index=True)
+    last_chapter = db.Column(db.String(64))
+    avg = db.Column(db.Float, default=0.0)
     comments = db.relationship('Comment', backref='book', lazy='dynamic')
 
     def __repr__(self):
         return '<Book {}>'.format(self.bookname)
+
+    @staticmethod
+    def insert_book():
+        with open(Config.BOOK_INFO, 'r') as f:
+            for line in f:
+                item = json.loads(line.strip())
+                b = Book(
+                    bookname=item['name'],
+                    book_id=item['book_id'],
+                    chapters=int(re.search('\d+', item['chapters']).group(0)),
+                    words=int(re.search('\d+', item['words']).group(0)),
+                    author=item['author'],
+                    tag=item['tag'],
+                    cover=item['cover'],
+                    pc_url=item['pc_url'],
+                    m_url=item['m_url'],
+                    source=item['source'],
+                    intro=item['intro'],
+                    last_update=arrow.get(item['last_update'], 'YY/MM/DD HHmm'),
+                    last_chapter=item['last_chapter']
+                )
+                try:
+                    db.session.add(b)
+                    db.session.commit()
+                except Exception as e:
+                    print(e)
+                    db.session.rollback()
+
+    def set_avg(self):
+        total = 0
+        count = 0
+        for c in self.comments:
+            total += c.score
+            count += 1
+        if count:
+            self.avg = total/count
+
+
 
 
 class Comment(db.Model):
