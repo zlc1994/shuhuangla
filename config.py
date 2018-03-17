@@ -10,3 +10,4 @@ class Config(object):
         'mysql+pymysql://zlc:1@localhost/shuhuang?charset=utf8'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BOOK_INFO = os.path.join(basedir, 'items.json')
+    REDIS_URL = "redis://localhost:6379/0"

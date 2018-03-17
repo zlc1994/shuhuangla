@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-one-quarter"></div>
+    <div class="column is-half">
+        <div class="box">
+                <h1 class="title is-size-3 is-size-5-mobile">
+                        {{ book.bookname }}
+                </h1>
+            <div class="media">
+                <div class="media-left">
+                    <figure class="cover">
+                    <img src="{{ book.cover }}">
+                    </figure>
+                </div>
+                <div class="media-content">
+                    <div class="content is-size-7-mobile">
+
+                        <span>标签: {{ book.tag }}</span>
+                        <br>
+                        <span>作者: {{ book.author }}</span>
+                        <br>
+                        <span>字数: {{ book.words }}</span>
+                        <br>
+                        <span>章节: {{ book.chapters }}</span>
+                        <br>
+                        <span>来源: {{ book.source }}</span>
+                        <br>
+                        <span>最近更新: {{ book.last_update.humanize(locale='zh_cn') }}</span>
+                        <br>
+                        <span>最近章节: {{ book.last_chapter }}</span>
+                    </div>
+                </div>
+                <div class="media-right">
+                    <span class="title">{{ '%0.2f' % book.avg | float}}</span>
+                </div>
+            </div>
+        </div>
+
+
+        <navbar class="navbar has-shadow">
+                <div class="contanier">
+                <div class="navbar-tabs">
+                    <a class="navbar-item is-tab" href="{{ url_for('book', book_id=book.id) }}">
+                        书籍介绍
+                    </a>
+                    <a class="navbar-item is-tab" href="{{ url_for('book_comments', book_id=book.id) }}">
+                        所有评论 ( {{ book.comments.count() }} )
+                    </a>
+                    <a class="navbar-item is-tab is-active" href="{{ url_for('similar_books', book_id=book.id) }}">
+                        相似书籍
+                    </a>
+                    <a class="navbar-item is-tab" href="{{ url_for('same_author', book_id=book.id) }}">
+                        作者的其他书籍 ( {{ same_author_books.count() }} )
+                    </a>
+                    <a class="navbar-item is-tab " href="{{ book.pc_url }}" target="_blank">
+                        前往阅读
+                    </a>
+                </div>
+                </div>
+        </navbar>
+        <div class="box">
+                {% for sbook, similarity in si_books %}
+                    <article class="media">
+                        <div class="media-left">
+                            <figure class="image cover">
+                                <img src="{{ sbook.cover }}" alt="Image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <div class="content">
+                                <h4 class="title"><a href="{{ url_for('book', book_id=sbook.id) }}"> {{ sbook.bookname }}</a><small>( {{ '%0.2f' % sbook.avg | float}}分, 共 {{ sbook.comments.count() }} 人评价, 相似度 {{ '%0.2f' % similarity | float }}% )</small></h4>
+                                <p class="intro is-size-7-mobile">{{ sbook.intro }}</p>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+                <br>
+        </div>
+        <div class="box">
+            <form action="{{ url_for('comment') }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        {{ form.score.label(class="label") }}
+                      </div>
+                        <div class="field-body">
+                            <div class="field is-narrow">
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        {{ form.score() }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        {{ form.body.label(class="label") }}
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                {{ form.body(class="textarea") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                  <div class="field-label">
+                    <!-- Left empty for spacing -->
+                  </div>
+                  <div class="field-body">
+                    <div class="field">
+                      <div class="control">
+                          {{ form.user_id(type="hidden", value=current_user.id) }}
+                          {{ form.book_id(type="hidden", value=book.id) }}
+                          {{ form.submit(class="button is-primary") }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

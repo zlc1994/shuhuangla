@@ -1,4 +1,4 @@
-from application import app, db
+from application import app, db, r
 from flask import render_template, flash, redirect, url_for, request
 from application.forms import LoginForm, RegistrationForm, SettingForm, CommentForm
 from application.models import User, Comment, Book
@@ -143,7 +143,8 @@ def unfollow(username):
 def book(book_id):
     form = CommentForm()
     book = Book.query.get_or_404(book_id)
-    return render_template('book.html', book=book, form=form)
+    same_author_books = Book.query.filter_by(author=book.author).filter(Book.id != book.id)
+    return render_template('book.html', book=book, form=form, same_author_books=same_author_books)
 
 
 @app.route('/book/<int:book_id>/comments')
@@ -152,7 +153,16 @@ def book_comments(book_id):
     book = Book.query.get_or_404(book_id)
     page = request.args.get('page', 1, type=int)
     pagination = book.comments.order_by(Comment.timestamp.desc()).paginate(page, 10, False)
-    return render_template('book_comments.html', book=book, form=form, pagination=pagination, comments=pagination.items)
+    same_author_books = Book.query.filter_by(author=book.author).filter(Book.id != book.id)
+    return render_template('book_comments.html', book=book, form=form, pagination=pagination, comments=pagination.items, same_author_books=same_author_books)
+
+
+@app.route('/book/<int:book_id>/sameauthor')
+def same_author(book_id):
+    form = CommentForm()
+    book = Book.query.get_or_404(book_id)
+    same_author_books = Book.query.filter_by(author=book.author).filter(Book.id != book.id)
+    return render_template('same_author_books.html', book=book, form=form, same_author_books=same_author_books)
 
 
 @app.route('/comment', methods=['POST'])
@@ -193,3 +203,21 @@ def allbooks():
     page = request.args.get('page', 1, type=int)
     pagination = Book.query.order_by(Book.avg.desc()).paginate(page, 10, False)
     return render_template('allbooks.html', pagination=pagination, books=pagination.items)
+
+
+@app.route('/book/<int:book_id>/similar_books')
+def similar_books(book_id):
+    form = CommentForm()
+    book = Book.query.get_or_404(book_id)
+    res = r.hgetall(book_id)
+    same_author_books = Book.query.filter_by(author=book.author).filter(Book.id != book.id)
+    si_books = []
+    print(res)
+    if res:
+        for key, value in res.items():
+            si_books.append((Book.query.get(key), float(value)*100))
+
+    return render_template('similar_books.html', book=book, si_books=si_books, same_author_books=same_author_books, form=form)
+
+
+

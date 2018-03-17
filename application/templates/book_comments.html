@@ -34,10 +34,7 @@
                     </div>
                 </div>
                 <div class="media-right">
-                    <span class="title">
-                        {{ book.avg }}
-                    </span>
-                    <br>
+<span class="title">{{ '%0.2f' % book.avg | float}}</span>
                 </div>
             </div>
         </div>
@@ -52,8 +49,11 @@
                     <a class="navbar-item is-tab is-active" href="{{ url_for('book_comments', book_id=book.id) }}">
                         所有评论 ( {{ book.comments.count() }} )
                     </a>
-                    <a class="navbar-item is-tab" href="#">
+                    <a class="navbar-item is-tab" href="{{ url_for('similar_books', book_id=book.id) }}">
                         相似书籍
+                    </a>
+                    <a class="navbar-item is-tab" href="{{ url_for('same_author', book_id=book.id) }}">
+                        作者的其他书籍 ( {{ same_author_books.count() }} )
                     </a>
                     <a class="navbar-item is-tab " href="{{ book.pc_url }}" target="_blank">
                         前往阅读

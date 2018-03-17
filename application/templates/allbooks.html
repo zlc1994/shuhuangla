@@ -74,7 +74,7 @@
                         </div>
                         <div class="media-content">
                             <div class="content">
-                                <h4 class="title"><a href="{{ url_for('book', book_id=book.id) }}"> {{ book.bookname }}</a>({{ '%0.2f' % book.avg | float}}分, 共 {{ book.comments.count() }} 人评价)</h4>
+                                <h4 class="title"><a href="{{ url_for('book', book_id=book.id) }}"> {{ book.bookname }}</a><small>( {{ '%0.2f' % book.avg | float}}分, 共 {{ book.comments.count() }} 人评价)</small></h4>
                                 <p class="subtitle is-size-6-mobile">{{ book.author }} 著 </p>
                                 <p class="intro is-size-7-mobile">{{ book.intro }}</p>
                             </div>
@@ -83,7 +83,7 @@
                 {% endfor %}
                 <br>
                 {{ macros.pagination_widget(pagination, 'allbooks') }}
-                </div>
+        </div>
     </div>
     <div class="column is-one-fifths"></div>
 </div>
