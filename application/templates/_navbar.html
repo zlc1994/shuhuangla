@@ -13,9 +13,10 @@
         </div>
         <div class="navbar-menu" id="navMenu">
             <div class="navbar-start">
-                <form class="navbar-item">
+                <form class="navbar-item" action="{{ url_for('search') }}" method="post" id="queryForm">
                     <div class="control has-icons-right">
-                        <input class="input is-success" type="text" placeholder="输入小说名/作者/用户名">
+                        {{ g.search_form.hidden_tag() }}
+                        {{ g.search_form.q(class="input is-success", placeholder="搜索你感兴趣的小说") }}
                         <span class="icon is-small is-right">
                             <i class="fas fa-search"></i>
                         </span>

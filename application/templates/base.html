@@ -25,10 +25,12 @@
     
     {% block content %}
     {% endblock %}
+    <div id="autocomplete" class="menu"></div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -57,5 +59,27 @@
 
 });
     </script>
+  <script>
+  $( function() {
+    $( "#q" ).autocomplete({
+        classes: {
+        "ui-autocomplete": "menu-list",
+       },
+      source: "{{ url_for('autocomplete') }}",
+      minLength: 2,
+      select: function(event, ui) {
+        $("#q").val(ui.item.value);
+        $("#queryForm").submit();
+
+        return false;
+      }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+      return $( "<li>" )
+        .append( item.value)
+        .appendTo( ul );
+    };
+  } );
+  </script>
   </body>
 </html>

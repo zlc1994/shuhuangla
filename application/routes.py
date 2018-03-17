@@ -1,6 +1,6 @@
 from application import app, db, r
-from flask import render_template, flash, redirect, url_for, request
-from application.forms import LoginForm, RegistrationForm, SettingForm, CommentForm
+from flask import render_template, flash, redirect, url_for, request, g, jsonify
+from application.forms import LoginForm, RegistrationForm, SettingForm, CommentForm, SearchForm
 from application.models import User, Comment, Book
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -73,6 +73,7 @@ def user(username):
 
 @app.before_request
 def before_request():
+    g.search_form = SearchForm()
     if current_user.is_authenticated:
         current_user.last_seen = arrow.utcnow()
         db.session.commit()
@@ -212,12 +213,30 @@ def similar_books(book_id):
     res = r.hgetall(book_id)
     same_author_books = Book.query.filter_by(author=book.author).filter(Book.id != book.id)
     si_books = []
-    print(res)
     if res:
         for key, value in res.items():
             si_books.append((Book.query.get(key), float(value)*100))
 
     return render_template('similar_books.html', book=book, si_books=si_books, same_author_books=same_author_books, form=form)
 
+
+@app.route('/search', methods=['POST'])
+def search():
+    if not g.search_form.validate_on_submit():
+        return redirect(url_for('index'))
+    return redirect(url_for('search_results', q=g.search_form.q.data))
+
+
+@app.route('/search_results/<q>')
+def search_results(q):
+    page = request.args.get('page', 1, type=int)
+    pagination = Book.query.filter(Book.bookname.contains(q)).order_by(Book.avg.desc()).paginate(page, 10, False)
+    return render_template('search_results.html', results=pagination.items, pagination=pagination, q=q)
+
+
+@app.route('/autocomplete')
+def autocomplete():
+    res = [book.bookname for book in Book.query.filter(Book.bookname.contains(request.args.get('term')))]
+    return jsonify(res)
 
 

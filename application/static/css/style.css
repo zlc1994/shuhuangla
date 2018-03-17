@@ -20,6 +20,16 @@ body {
     overflow:hidden;
 }
 
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    border:1px solid #222;
+    position:absolute;
+    background-color: white;
+}
+
 @media screen and (max-width: 600px) {
   .cover {
     width:94.5px;

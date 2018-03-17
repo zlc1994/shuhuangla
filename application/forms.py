@@ -45,3 +45,7 @@ class CommentForm(FlaskForm):
     )
     body = TextAreaField('说点什么吧', validators=[DataRequired()])
     submit = SubmitField('提交')
+
+
+class SearchForm(FlaskForm):
+    q = StringField(validators=[DataRequired()])
