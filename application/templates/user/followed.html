@@ -32,9 +32,9 @@
                 <div class="media-right">
                    {% if current_user.is_authenticated and user != current_user %}
                      {% if current_user.is_following(user) %}
-                     <p><a href="{{ url_for('unfollow', username=user.username) }}" class="button is-danger is-outlined">取消关注</a></p>
+                     <p><a href="{{ url_for('main.unfollow', username=user.username) }}" class="button is-danger is-outlined">取消关注</a></p>
                      {% else %}
-                     <p><a href="{{ url_for('follow', username=user.username) }}" class="button is-success">关注</a></p>
+                     <p><a href="{{ url_for('main.follow', username=user.username) }}" class="button is-success">关注</a></p>
                      {% endif %}
                    {% endif %}
                 </div>
@@ -42,13 +42,13 @@
         </div>
         <navbar class="navbar has-shadow">
             <div class="navbar-tabs">
-                <a class="navbar-item is-tab" href="{{ url_for('user', username=user.username) }}">
+                <a class="navbar-item is-tab" href="{{ url_for('user.index', username=user.username) }}">
                     {{ user.username }} 的所有评论( {{ user.comments.count() }} )
                 </a>
-                <a class="navbar-item is-tab" href="{{ url_for('followed', username=user.username) }}">
+                <a class="navbar-item is-tab is-active" href="{{ url_for('user.followed', username=user.username) }}">
                     关注 ( {{ user.followed.count() }} )
                 </a>
-                <a class="navbar-item is-tab is-active" href="{{ url_for('followers', username=user.username) }}">
+                <a class="navbar-item is-tab" href="{{ url_for('user.followers', username=user.username) }}">
                     粉丝 ( {{ user.followers.count() }} )
                 </a>
             </div>
@@ -64,7 +64,7 @@
                 <div class="media-content">
                     <div class="content">
                         <p>
-                            <a href="{{ url_for('user', username=person.username) }}"><strong>{{ person.username }}</strong></a>
+                            <a href="{{ url_for('user.index', username=person.username) }}"><strong>{{ person.username }}</strong></a>
                             <br>
                             <small>书荒啦第 {{ person.id }} 号会员，加入于{{ person.join_time }}，最后活跃 {{ person.last_seen.humanize(locale='zh_cn') }}</small>
                             <br>
@@ -81,9 +81,9 @@
                 <div class="media-right">
                    {% if current_user.is_authenticated and person != current_user %}
                      {% if current_user.is_following(person) %}
-                     <p><a href="{{ url_for('unfollow', username=person.username) }}" class="button is-danger is-outlined">取消关注</a></p>
+                     <p><a href="{{ url_for('main.unfollow', username=person.username) }}" class="button is-danger is-outlined">取消关注</a></p>
                      {% else %}
-                     <p><a href="{{ url_for('follow', username=person.username) }}" class="button is-success">关注</a></p>
+                     <p><a href="{{ url_for('main.follow', username=person.username) }}" class="button is-success">关注</a></p>
                      {% endif %}
                    {% endif %}
                 </div>

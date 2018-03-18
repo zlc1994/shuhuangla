@@ -32,28 +32,28 @@
                 <div class="media-right">
                    {% if current_user.is_authenticated and user != current_user %}
                      {% if current_user.is_following(user) %}
-                     <p><a href="{{ url_for('unfollow', username=user.username) }}" class="button is-danger is-outlined">取消关注</a></p>
+                     <p><a href="{{ url_for('main.unfollow', username=user.username) }}" class="button is-danger is-outlined">取消关注</a></p>
                      {% else %}
-                     <p><a href="{{ url_for('follow', username=user.username) }}" class="button is-success">关注</a></p>
+                     <p><a href="{{ url_for('main.follow', username=user.username) }}" class="button is-success">关注</a></p>
                      {% endif %}
                    {% endif %}
                 </div>
             </div>
         </div>
         <navbar class="navbar has-shadow">
-            <div class="contanier">
-            <div class="navbar-tabs">
-                <a class="navbar-item is-tab is-active" href="{{ url_for('user', username=user.username) }}">
-                    {{ user.username }} 的所有评论( {{ user.comments.count() }} )
-                </a>
-                <a class="navbar-item is-tab" href="{{ url_for('followed', username=user.username) }}">
-                    关注 ( {{ user.followed.count() }} )
-                </a>
-                <a class="navbar-item is-tab" href="{{ url_for('followers', username=user.username) }}">
-                    粉丝 ( {{ user.followers.count() }} )
-                </a>
-            </div>
-            </div>
+    <div class="contanier">
+        <div class="navbar-tabs">
+            <a class="navbar-item is-tab is-active" href="{{ url_for('user.index', username=user.username) }}">
+                {{ user.username }} 的所有评论( {{ user.comments.count() }} )
+            </a>
+            <a class="navbar-item is-tab" href="{{ url_for('user.followed', username=user.username) }}">
+                关注 ( {{ user.followed.count() }} )
+            </a>
+            <a class="navbar-item is-tab" href="{{ url_for('user.followers', username=user.username) }}">
+                粉丝 ( {{ user.followers.count() }} )
+            </a>
+        </div>
+        </div>
         </navbar>
         <div class="box">
                 {% for comment in comments %}
@@ -66,8 +66,8 @@
                         <div class="media-content">
                             <div class="content">
                                 <p>
-                                <a href="{{ url_for('user', username=comment.user.username) }}"><strong>{{ comment.user.username }}</strong></a> 
-                                    <small> 评价了 <a href="{{ url_for('book', book_id=comment.book.id) }}">《{{ comment.book.bookname }}》</a></small>
+                                <a href="{{ url_for('user.index', username=comment.user.username) }}"><strong>{{ comment.user.username }}</strong></a>
+                                    <small> 评价了 <a href="{{ url_for('book.index', book_id=comment.book.id) }}">《{{ comment.book.bookname }}》</a></small>
                                 <br>
                                 {{ macros.render_star(comment.score) }}
                                 <br>
@@ -81,7 +81,7 @@
                     </article>
                 {% endfor %}
                 <br>
-                {{ macros.pagination_widget(pagination, 'user', username=username) }}
+                {{ macros.pagination_widget(pagination, 'user.index', username=username) }}
         </div>
     </div>
     </div>

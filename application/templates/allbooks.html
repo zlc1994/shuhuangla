@@ -19,27 +19,27 @@
                     <div class="level-item has-text-centered">
                         <div>
                         <p class="heading">评论</p>
-                        <a class="title" href="{{ url_for('user', username=current_user.username) }}">{{ current_user.comments.count() }}</a>
+                        <a class="title" href="{{ url_for('user.index', username=current_user.username) }}">{{ current_user.comments.count() }}</a>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
                         <p class="heading">关注</p>
-                        <a class="title" href="{{ url_for('followed', username=current_user.username) }}">{{ current_user.followed.count() }}</a>
+                        <a class="title" href="{{ url_for('user.followed', username=current_user.username) }}">{{ current_user.followed.count() }}</a>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
                         <p class="heading">粉丝</p>
-                        <a class="title" href="{{ url_for('followers', username=current_user.username) }}">{{ current_user.followers.count() }}</a>
+                        <a class="title" href="{{ url_for('user.followers', username=current_user.username) }}">{{ current_user.followers.count() }}</a>
                         </div>
                     </div>
                 </nav>
                 {% else %}
                 <div class="has-text-centered">
                 <p class="is-large">书荒啦——推荐你喜欢的小说</p>
-                <p><a class="button" href="{{ url_for('register') }}">注册</a></p>
-                <p class="is-small">已注册用户？<a href="{{ url_for('login') }}">登入</a></p>
+                <p><a class="button" href="{{ url_for('auth.register') }}">注册</a></p>
+                <p class="is-small">已注册用户？<a href="{{ url_for('auth.login') }}">登入</a></p>
                 </div>
                 {% endif %}
             </div>
@@ -47,11 +47,11 @@
     <div class="column is-two-fifths">
         <navbar class="navbar has-shadow">
                 <div class="navbar-tabs">
-                    <a class="navbar-item is-tab" href="{{ url_for('index') }}">
+                    <a class="navbar-item is-tab" href="{{ url_for('main.index') }}">
                         最新评论
                     </a>
                     {% if current_user.is_authenticated %}
-                    <a class="navbar-item is-tab" href="{{ url_for('followed_comments') }}">
+                    <a class="navbar-item is-tab" href="{{ url_for('main.followed_comments') }}">
                         我的关注
                     </a>
                     {% else %}
@@ -59,7 +59,7 @@
                         我的关注
                     </a>
                     {% endif %}
-                    <a class="navbar-item is-tab is-active" href="{{ url_for('allbooks') }}" >
+                    <a class="navbar-item is-tab is-active" href="{{ url_for('main.allbooks') }}" >
                         所有小说
                     </a>
                 </div>
@@ -74,7 +74,7 @@
                         </div>
                         <div class="media-content">
                             <div class="content">
-                                <h4 class="title"><a href="{{ url_for('book', book_id=book.id) }}"> {{ book.bookname }}</a><small>( {{ '%0.2f' % book.avg | float}}分, 共 {{ book.comments.count() }} 人评价)</small></h4>
+                                <h4 class="title"><a href="{{ url_for('book.index', book_id=book.id) }}"> {{ book.bookname }}</a><small>( {{ '%0.2f' % book.avg | float}}分, 共 {{ book.comments.count() }} 人评价)</small></h4>
                                 <p class="subtitle is-size-6-mobile">{{ book.author }} 著 </p>
                                 <p class="intro is-size-7-mobile">{{ book.intro }}</p>
                             </div>
@@ -82,7 +82,7 @@
                     </article>
                 {% endfor %}
                 <br>
-                {{ macros.pagination_widget(pagination, 'allbooks') }}
+                {{ macros.pagination_widget(pagination, 'main.allbooks') }}
         </div>
     </div>
     <div class="column is-one-fifths"></div>

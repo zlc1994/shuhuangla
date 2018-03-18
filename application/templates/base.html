@@ -18,8 +18,8 @@
 
     </title>
   </head>
-  <body>
-    {% include "_navbar.html" %}
+  <body class="is-clear-fix">
+    {% include "_partial/top_navbar.html" %}
     <div class="sep20"></div>
     {% include "_message.html" %}
     
@@ -65,7 +65,7 @@
         classes: {
         "ui-autocomplete": "menu-list",
        },
-      source: "{{ url_for('autocomplete') }}",
+      source: "{{ url_for('main.autocomplete') }}",
       minLength: 2,
       select: function(event, ui) {
         $("#q").val(ui.item.value);
