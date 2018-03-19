@@ -11,5 +11,5 @@ class CommentForm(FlaskForm):
         choices=[(5, 5), (4, 4), (3, 3), (2, 2), (1, 1)],
         coerce=int
     )
-    body = TextAreaField('说点什么吧', validators=[DataRequired()])
+    body = TextAreaField('说点什么吧', validators=[DataRequired(message="说点什么吧")])
     submit = SubmitField('提交')

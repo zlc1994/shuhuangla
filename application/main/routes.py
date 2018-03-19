@@ -2,7 +2,7 @@ from flask import render_template, redirect, jsonify, request, g, flash, url_for
 from flask_login import login_required, current_user
 from . import bp
 from .forms import SearchForm, SettingForm
-from application import db
+from application import db, flash_errors
 from application.book.forms import CommentForm
 from application.models import Comment, Book, User
 import arrow
@@ -13,7 +13,11 @@ import arrow
 def index():
     page = request.args.get('page', 1, type=int)
     pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(page, 10, False)
-    return render_template('index.html', title='首页', comments=pagination.items, pagination=pagination)
+    total_users = User.query.count()
+    total_books = Book.query.count()
+    total_comments = Comment.query.count()
+    return render_template('index.html', title='首页', comments=pagination.items, pagination=pagination,
+                           total_users=total_users, total_books=total_books, total_comments=total_comments)
 
 
 @bp.route('/followed_posts')
@@ -39,9 +43,11 @@ def settings():
     if form.validate_on_submit():
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash('资料修改成功', 'is-success')
     elif request.method == 'GET':
         form.about_me.data = current_user.about_me
+    else:
+        flash_errors(form)
     return render_template('settings.html', form=form)
 
 
@@ -90,23 +96,18 @@ def comment():
                 c.body = form.body.data
                 c.score = form.score.data
                 c.timestamp = arrow.utcnow()
-                flash('修改成功!')
+                flash('修改成功!', 'is-success')
             else:
                 c = Comment(user=u, book=b, body=form.body.data, score=form.score.data)
                 db.session.add(c)
-                flash('评论成功')
+                flash('评论成功', 'is-success')
             b.set_avg()
             db.session.commit()
         else:
-            flash('该用户或书籍不存在')
+            flash('该用户或书籍不存在', 'is-danger')
             return redirect(url_for('main.index'))
     else:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(u"Error in the %s field - %s" % (
-                    getattr(form, field).label.text,
-                    error
-                ))
+        flash_errors(form)
     return redirect(url_for('book.index', book_id=form.book_id.data))
 
 

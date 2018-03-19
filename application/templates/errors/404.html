@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="contanier">
-    <h1 class="title">404 File Not Found</h1>
-    <p class="subtitle"><a href="{{ url_for('index') }}">返回首页</a></p>
-</div>
+<section class="hero is-danger is-fullheight">
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title">
+        404
+      </h1>
+      <h2 class="subtitle">
+        <a href="{{ url_for('main.index') }}">你来到了一片没有小说的荒原, 点击返回首页</a>
+      </h2>
+    </div>
+  </div>
+</section>
 {% endblock %}

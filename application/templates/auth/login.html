@@ -1,53 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="columns">
-    <div class="column is-one-third"></div>
-    <div class="column is-one-third">
-    <div class="card">
-        <div class="card-header">
-            <div class="breadcrumb card-header-title" aria-label="breadcrumbs">
-                    <ul>
-                        <li><a href="{{ url_for('main.index') }}">书荒啦</a></li>
-                        <li class="is-active"><a href="#" aria-current="page">登入</a></li>
-                    </ul>
-            </div>
-        </div>
-        <div class="card-content">
-            <form action="" method="post">
-                    {{ form.hidden_tag() }}
-                    <div class="field">
-                        {{ form.username.label(class="label") }}
-                        <div class="control has-icons-left">
-                            {{ form.username(class="input") }}
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-user"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="field">
-                            {{ form.password.label(class="label") }}
-                            <div class="control has-icons-left">
-                                {{ form.password(class="input") }}
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-key"></i>
-                                </span>
-                            </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            {{ form.remember_me(class="checkbox") }}
-                            {{ form.remember_me.label(class="checkbox") }}
-                        </div>
-                    </div>
-                    <div class="field is-grouped">
-                        <div class="control">
-                            {{ form.submit(class="button is-link") }}
-                        </div>
-                    </div>
-            </form>
+<div class="card SignForm">
+    <div class="card-header">
+        <div class="breadcrumb card-header-title" aria-label="breadcrumbs">
+                <ul>
+                    <li><a href="{{ url_for('main.index') }}">书荒啦</a></li>
+                    <li class="is-active"><a href="#" aria-current="page">登入</a></li>
+                </ul>
         </div>
     </div>
-    </div>  
+    <div class="card-content">
+        <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <div class="field">
+                    {{ form.username.label(class="label") }}
+                    <div class="control has-icons-left">
+                        {{ form.username(class="input") }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                        {{ form.password.label(class="label") }}
+                        <div class="control has-icons-left">
+                            {{ form.password(class="input") }}
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-key"></i>
+                            </span>
+                        </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.remember_me(class="checkbox") }}
+                        {{ form.remember_me.label(class="checkbox") }}
+                        <a href="{{ url_for('auth.reset_password_request') }}" class="is-pulled-right">忘记密码？</a>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.submit(class="button is-primary is-fullwidth") }}
+                    </div>
+                </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

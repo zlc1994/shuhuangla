@@ -20,7 +20,8 @@ def comments(book_id):
     page = request.args.get('page', 1, type=int)
     pagination = book.comments.order_by(Comment.timestamp.desc()).paginate(page, 10, False)
     same_author_books = Book.query.filter_by(author=book.author).filter(Book.id != book.id)
-    return render_template('book/comments.html', book=book, form=form, pagination=pagination, comments=pagination.items, same_author_books=same_author_books)
+    return render_template('book/comments.html', book=book, form=form, pagination=pagination,
+                           comments=pagination.items, same_author_books=same_author_books)
 
 
 @bp.route('/<int:book_id>/same_author')
@@ -42,4 +43,5 @@ def similar_books(book_id):
         for key, value in res.items():
             si_books.append((Book.query.get(key), float(value)*100))
 
-    return render_template('book/similar_books.html', book=book, si_books=si_books, same_author_books=same_author_books, form=form)
+    return render_template('book/similar_books.html', book=book, si_books=si_books,
+                           same_author_books=same_author_books, form=form)

@@ -43,6 +43,25 @@
                 </div>
                 {% endif %}
             </div>
+            <div class="box">
+                <div class="has-text-centered">网站运行状况</div>
+                <table class="table is-fullwidth">
+                    <tbody>
+                    <tr>
+                        <td>注册会员人数:</td>
+                        <td>{{ total_users }}</td>
+                    </tr>
+                    <tr>
+                        <td>收录小说:</td>
+                        <td>{{ total_books }}</td>
+                    </tr>
+                    <tr>
+                        <td>评论数量:</td>
+                        <td>{{ total_comments }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     <div class="column is-two-fifths">
         <navbar class="navbar has-shadow">

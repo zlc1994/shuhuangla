@@ -2,6 +2,11 @@
     height: 20px;
 }
 
+.SignForm {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
 body {
     background-color: #e2e2e2;
     min-height: 100vh;

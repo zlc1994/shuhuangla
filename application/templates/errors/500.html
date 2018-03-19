@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>糟糕，发生错误了！</h1>
-    <p><a href="{{ url_for('index') }}">返回首页</a></p>
+<section class="hero is-danger is-fullheight">
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title">
+        500
+      </h1>
+      <h2 class="subtitle">
+        <a href="{{ url_for('main.index') }}">糟糕, 服务器发生错误, 管理员已经收到通知并很快处理, 点击返回首页</a>
+      </h2>
+    </div>
+  </div>
+</section>
 {% endblock %}
