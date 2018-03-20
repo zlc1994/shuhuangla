@@ -1,85 +1,42 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.bootcss.com/bulma/0.6.2/css/bulma.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.bootcss.com/bulma/0.6.2/css/bulma.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 
-    <title>
-        {% if title %}
-        {{ title }} - 书荒啦
-        {% else %}
-        欢迎来到书荒啦
-        {% endif %}
+  <title>
+    {% if title %}
+    {{ title }} - 书荒啦
+    {% else %}
+    欢迎来到书荒啦
+    {% endif %}
 
-    </title>
-  </head>
-  <body class="is-clear-fix">
-    {% include "_partial/top_navbar.html" %}
-    <div class="sep20"></div>
-    {% include "_message.html" %}
-    
-    {% block content %}
-    {% endblock %}
-    <div id="autocomplete" class="menu"></div>
+  </title>
+</head>
+<body class="is-clear-fix">
+{% include "_partial/top_navbar.html" %}
+{% include "_message.html" %}
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+{% block error %}
+{% endblock %}
 
-  // Get all "navbar-burger" elements
-  var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+<div class="Main">
 
-  // Check if there are any navbar burgers
-  if ($navbarBurgers.length > 0) {
+  {% block content %}
+  {% endblock %}
 
-    // Add a click event on each of them
-    $navbarBurgers.forEach(function ($el) {
-      $el.addEventListener('click', function () {
+</div>
 
-        // Get the target from the "data-target" attribute
-        var target = $el.dataset.target;
-        var $target = document.getElementById(target);
-
-        // Toggle the class on both the "navbar-burger" and the "navbar-menu"
-        $el.classList.toggle('is-active');
-        $target.classList.toggle('is-active');
-
-      });
-    });
-  }
-
-});
-    </script>
-  <script>
-  $( function() {
-    $( "#q" ).autocomplete({
-        classes: {
-        "ui-autocomplete": "menu-list",
-       },
-      source: "{{ url_for('main.autocomplete') }}",
-      minLength: 2,
-      select: function(event, ui) {
-        $("#q").val(ui.item.value);
-        $("#queryForm").submit();
-
-        return false;
-      }
-    })
-    .autocomplete( "instance" )._renderItem = function( ul, item ) {
-      return $( "<li>" )
-        .append( item.value)
-        .appendTo( ul );
-    };
-  } );
-  </script>
-  </body>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
 </html>

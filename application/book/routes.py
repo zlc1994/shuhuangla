@@ -1,8 +1,9 @@
+from flask import request, render_template
+
+from application import r
+from application.models import Book, Comment
 from . import bp
 from .forms import CommentForm
-from application.models import Book, Comment
-from flask import request, render_template
-from application import r
 
 
 @bp.route('/<int:book_id>')

@@ -1,4 +1,5 @@
 from flask import render_template
+
 from application import db
 from . import bp
 

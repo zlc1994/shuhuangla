@@ -7,6 +7,10 @@
     margin: 0 auto;
 }
 
+.Main {
+    margin-top: 1.5rem;
+}
+
 body {
     background-color: #e2e2e2;
     min-height: 100vh;
@@ -17,12 +21,12 @@ body {
 }
 
 .cover {
-    width: 144px;
-    height: 192px;
+    width: 9rem;
+    height: 12rem;
 }
 
 .intro {
-    height:144px;
+    height: 9rem;
     overflow:hidden;
 }
 
@@ -36,13 +40,17 @@ body {
     background-color: white;
 }
 
+.ui-helper-hidden-accessible {
+    display:none;
+}
+
 @media screen and (max-width: 600px) {
   .cover {
-    width:94.5px;
-    height:126px;
+    width: 6rem;
+    height: 7.785rem;
   }
   .intro {
-    height:90px;
+    height: 5.625rem;
     overflow:hidden;
   }
 }

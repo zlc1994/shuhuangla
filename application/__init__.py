@@ -1,13 +1,14 @@
-from flask import Flask, flash
-from config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager
-from flask_redis import FlaskRedis
-from flask_mail import Mail
 import logging
 from logging.handlers import SMTPHandler
 
+from flask import Flask, flash
+from flask_login import LoginManager
+from flask_mail import Mail
+from flask_migrate import Migrate
+from flask_redis import FlaskRedis
+from flask_sqlalchemy import SQLAlchemy
+
+from config import Config
 
 db = SQLAlchemy()
 migrate = Migrate(db)

@@ -1,11 +1,12 @@
+import arrow
 from flask import render_template, redirect, jsonify, request, g, flash, url_for
 from flask_login import login_required, current_user
-from . import bp
-from .forms import SearchForm, SettingForm
+
 from application import db, flash_errors
 from application.book.forms import CommentForm
 from application.models import Comment, Book, User
-import arrow
+from . import bp
+from .forms import SearchForm, SettingForm
 
 
 @bp.route('/')
@@ -129,7 +130,11 @@ def search():
 def search_results(q):
     page = request.args.get('page', 1, type=int)
     pagination = Book.query.filter(Book.bookname.contains(q)).order_by(Book.avg.desc()).paginate(page, 10, False)
-    return render_template('search_results.html', results=pagination.items, pagination=pagination, q=q)
+    total_users = User.query.count()
+    total_books = Book.query.count()
+    total_comments = Comment.query.count()
+    return render_template('search_results.html', results=pagination.items, pagination=pagination, q=q,
+                           total_comments=total_comments, total_books=total_books, total_users=total_users)
 
 
 @bp.route('/autocomplete')
