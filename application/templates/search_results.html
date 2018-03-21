@@ -65,7 +65,8 @@
         </div>
     <div class="column is-two-fifths">
           <div class="box">
-              {% if results %}
+              <p>如果没有找到相关的小说，您也可以<a href="{{ url_for('main.submit_new_book') }}">点击这里</a>向我们提交</p>
+              <br>
                 {% for book in results %}
                     <article class="media">
                         <div class="media-left">
@@ -82,9 +83,6 @@
                         </div>
                     </article>
                 {% endfor %}
-              {% else %}
-              <p>没有找到相关的小说，您也可以<a href="{{ url_for('main.submit_new_book') }}">点击这里</a>向我们提交</p>
-              {% endif %}
                 <br>
                 {{ macros.pagination_widget(pagination, 'main.search_results', q=q) }}
         </div>
