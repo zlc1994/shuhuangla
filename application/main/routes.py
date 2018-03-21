@@ -5,8 +5,9 @@ from flask_login import login_required, current_user
 from application import db, flash_errors
 from application.book.forms import CommentForm
 from application.models import Comment, Book, User
+from application.tasks import start_spider
 from . import bp
-from .forms import SearchForm, SettingForm
+from .forms import SearchForm, SettingForm, SubmitNewBookForm
 
 
 @bp.route('/')
@@ -84,7 +85,7 @@ def unfollow(username):
     return redirect(url_for('user.index', username=username))
 
 
-@bp.route('/comment', methods=['POST'])
+@bp.route('/comment', methods=['GET', 'POST'])
 @login_required
 def comment():
     form = CommentForm()
@@ -141,3 +142,14 @@ def search_results(q):
 def autocomplete():
     res = [book.bookname for book in Book.query.filter(Book.bookname.contains(request.args.get('term')))]
     return jsonify(res)
+
+
+@bp.route('/submit_new_book', methods=['GET', 'POST'])
+def submit_new_book():
+    form = SubmitNewBookForm()
+    if form.validate_on_submit():
+        start_spider.queue(form.url.data)
+        flash('任务已经提交到队列，这本书或许需要一些时间才能被搜索到', 'is-success')
+    else:
+        flash_errors(form)
+    return render_template('submit_new_book.html', form=form)

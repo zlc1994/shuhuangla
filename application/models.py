@@ -118,7 +118,7 @@ class Book(db.Model):
                     m_url=item['m_url'],
                     source=item['source'],
                     intro=item['intro'],
-                    last_update=arrow.get(item['last_update'], 'YY/MM/DD HHmm'),
+                    last_update=arrow.get(item['last_update'], 'YY/MM/DD HHmm').replace(tzinfo='Asia/Shanghai'),
                     last_chapter=item['last_chapter']
                 )
                 try:

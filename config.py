@@ -13,6 +13,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BOOK_INFO = os.path.join(basedir, 'items.json')
     REDIS_URL = "redis://localhost:6379/0"
+    RQ_REDIS_URL = "redis://localhost:6379/1"
 
     # for email
     MAIL_SERVER = 'smtp.qq.com'

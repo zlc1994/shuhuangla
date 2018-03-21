@@ -79,51 +79,7 @@
                 {% endfor %}
                 <br>
         </div>
-        <div class="box">
-            <form action="{{ url_for('main.comment') }}" method="post">
-                {{ form.hidden_tag() }}
-                <div class="field is-horizontal">
-                      <div class="field-label is-normal">
-                        {{ form.score.label(class="label") }}
-                      </div>
-                        <div class="field-body">
-                            <div class="field is-narrow">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                        {{ form.score() }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        {{ form.body.label(class="label") }}
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                {{ form.body(class="textarea") }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="field is-horizontal">
-                  <div class="field-label">
-                    <!-- Left empty for spacing -->
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <div class="control">
-                          {{ form.user_id(type="hidden", value=current_user.id) }}
-                          {{ form.book_id(type="hidden", value=book.id) }}
-                          {{ form.submit(class="button is-primary") }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </form>
-        </div>
+{% include "_partial/comment_form.html" %}
     </div>
 </div>
 {% endblock %}

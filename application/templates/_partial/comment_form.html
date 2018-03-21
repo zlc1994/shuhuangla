@@ -1,0 +1,50 @@
+<div class="box">
+    <form action="{{ url_for('main.comment') }}" method="post">
+        {{ form.hidden_tag() }}
+        <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                {{ form.score.label(class="label") }}
+              </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                {{ form.score() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                {{ form.body.label(class="label") }}
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        {{ form.body(class="textarea") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <!-- Left empty for spacing -->
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                  {{ form.user_id(type="hidden", value=current_user.id) }}
+                  {{ form.book_id(type="hidden", value=book.id) }}
+                  {% if current_user.is_authenticated %}
+                  {{ form.submit(class="button is-primary") }}
+                  {% else %}
+                  {{ form.submit(class="button is-primary", disabled=True) }}
+                  <a href="{{ url_for('auth.login') }}" class="button is-primary">请先登入</a>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+</div>

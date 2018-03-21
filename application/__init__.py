@@ -7,10 +7,12 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_redis import FlaskRedis
 from flask_sqlalchemy import SQLAlchemy
+from flask_rq2 import RQ
 
 from config import Config
 
 db = SQLAlchemy()
+rq = RQ()
 migrate = Migrate(db)
 mail = Mail()
 r = FlaskRedis(decode_responses=True)
@@ -67,4 +69,6 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     r.init_app(app)
+    rq.init_app(app)
+
     return app
