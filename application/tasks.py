@@ -4,12 +4,17 @@ from bs4 import BeautifulSoup
 from application.models import Book
 import arrow
 import re
+import json
 
 
 def qidian_spider(app, url):
-    if '#Catalog' not in url:
-        url = url + '#Catalog'
-    url = url.replace('https://', 'http://')
+    book_id = re.search('\d+', url)
+    if book_id is None:
+        return
+    book_id = book_id.group(0)
+
+    # crawl the mobile page
+    url = 'https://m.qidian.com/book/' + book_id
 
     # extract book detail
     r = requests.get(url)
@@ -18,24 +23,30 @@ def qidian_spider(app, url):
 
     soup = BeautifulSoup(r.text, 'lxml')
 
-    cover = soup.find('div', class_='book-img').a.img.get('src')
-    info_field = soup.find('div', class_='book-info')
-    bookname = info_field.h1.em.text
-    author = info_field.span.a.text
-    tag = info_field.find('p', class_='tag').a.text
-    intro = soup.find('div', class_='book-intro').text
-    chapters = soup.find('div', class_='volume-wrap').find_all('li')
-    total_chapters = len(chapters)
+    cover = soup.find('div', class_='book-layout').img.get('src')
+    bookname = soup.find('h2', class_='book-title').text
+    author = soup.find('h4', class_='book-title').text
+    tag = soup.find('p', class_='book-meta').text
+    intro = soup.find('content').text
+
+    # use api to get chapter details
+    r = requests.get('https://book.qidian.com/ajax/book/category?bookId='+book_id)
+    r.encoding  = 'utf-8'
+    results = json.loads(r.text)
+
+    if results['code']:
+        return
+
+    total_chapters = results['data']['chapterTotalCnt']
     total_words = 0
-    last_update = arrow.get(chapters[-1].a.get('title'), 'YYYY-MM-DD HH:mm:ss').replace(tzinfo='Asia/Shanghai')
-    last_chapter = chapters[-1].a.text
+    last_update = arrow.get(results['data']['vs'][-1]['cs'][-1]['uT'],
+                            'YYYY-MM-DD HH:mm:ss').replace(tzinfo='Asia/Shanghai')
+    last_chapter = results['data']['vs'][-1]['cs'][-1]['cN']
 
     # count total words
-    for c in chapters:
-        title = c.a.get('title')
-        words = re.search('章节字数：(\d+)', title)
-        if words:
-            total_words += int(words.group(1))
+    for volume in results['data']['vs']:
+        for c in volume['cs']:
+            total_words += c['cnt']
 
     with app.app_context():
         book = Book.query.filter_by(pc_url=url).first()

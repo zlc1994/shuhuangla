@@ -15,5 +15,5 @@ class SubmitNewBookForm(FlaskForm):
     submit = SubmitField('提交')
 
     def validate_url(self, url):
-        if 'book.qidian.com/info' not in url.data:
+        if 'qidian.com' not in url.data:
             raise ValidationError('暂不支持该网站')
