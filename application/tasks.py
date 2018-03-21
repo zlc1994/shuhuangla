@@ -48,8 +48,10 @@ def qidian_spider(app, url):
         for c in volume['cs']:
             total_words += c['cnt']
 
+    pc_url = 'http://book.qidian.com/info/{}#Catalog'.format(book_id)
+
     with app.app_context():
-        book = Book.query.filter_by(pc_url=url).first()
+        book = Book.query.filter_by(pc_url=pc_url).first()
 
         if book:
             book.cover = cover
@@ -69,7 +71,8 @@ def qidian_spider(app, url):
                 last_chapter=last_chapter,
                 cover=cover,
                 source='起点中文网',
-                pc_url=url,
+                pc_url=pc_url,
+                m_url=url
             )
             db.session.add(book)
         db.session.commit()
