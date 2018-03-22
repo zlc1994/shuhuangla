@@ -2,7 +2,7 @@ import arrow
 from flask import render_template, redirect, jsonify, request, g, flash, url_for
 from flask_login import login_required, current_user
 
-from application import db, flash_errors
+from application import db, flash_errors, r
 from application.book.forms import CommentForm
 from application.models import Comment, Book, User
 from application.tasks import start_spider
@@ -153,3 +153,39 @@ def submit_new_book():
     else:
         flash_errors(form)
     return render_template('submit_new_book.html', form=form)
+
+
+@bp.route('/guess_you_like')
+@login_required
+def guess_you_like():
+    total_users = User.query.count()
+    total_books = Book.query.count()
+    total_comments = Comment.query.count()
+    comments = current_user.comments.all()
+    already_read = {i.book_id: 1 for i in comments}
+    total_si = {}
+    total_sum = {}
+    rec = []
+    if comments is None:
+        flash('您还没有评价任何小说，暂时无法为您推荐')
+    for comment in comments:
+        if r.exists(comment.book_id):
+            for similar_book, value in r.hgetall(comment.book_id).items():
+                similar_book = int(similar_book)
+                value = float(value)
+                if similar_book not in already_read:
+                    total_si.setdefault(similar_book, 0)
+                    total_sum.setdefault(similar_book, 0)
+
+                    total_sum[similar_book] += value * comment.score
+                    total_si[similar_book] += value
+
+    for item in total_si:
+        if total_si[item] and total_sum[item] / total_si[item] >= 3:
+            rec.append((total_sum[item] / total_si[item], Book.query.get(item)))
+
+    rec = sorted(rec, key=lambda x: x[0])
+    rec = rec[:20]
+
+    return render_template('guess_you_like.html', rec=rec, total_books=total_books, total_users=total_users,
+                           total_comments=total_comments)

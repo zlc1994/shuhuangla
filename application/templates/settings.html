@@ -33,14 +33,6 @@
                                     <td width=auto>{{ current_user.email}}</td>
                                 </tr>
                                 <tr>
-                                    <td width=120 ></td>
-                                    <td width=auto>
-                                        <a href="#">
-                                            更改邮件地址
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td width=120 >{{ form.about_me.label }}</td>
                                     <td width=auto>
                                         {{ form.about_me(class="textarea", placeholder=current_user.about_me) }}
