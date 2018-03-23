@@ -3,7 +3,7 @@ from flask_login import current_user, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from application import db, flash_errors
-from application.email import send_password_reset_email
+from .tasks import send_password_reset_email
 from application.models import User
 from . import bp
 from .forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
@@ -61,7 +61,7 @@ def reset_password_request():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
-            send_password_reset_email(user)
+            send_password_reset_email.queue(user)
             flash('请点击邮箱中的链接完成密码重置，如果没有收到邮件，请检查垃圾箱', 'is-success')
         else:
             flash('邮箱不存在', 'is-danger')

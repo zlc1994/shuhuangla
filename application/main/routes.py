@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from application import db, flash_errors, r
 from application.book.forms import CommentForm
 from application.models import Comment, Book, User
-from application.tasks import start_spider
+from .tasks import start_spider
 from . import bp
 from .forms import SearchForm, SettingForm, SubmitNewBookForm
 
