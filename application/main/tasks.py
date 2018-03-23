@@ -13,4 +13,3 @@ def start_spider(url):
 def run_cf():
     cf = CollaborativeFiltering(create_app())
     cf.save()
-    cf.tear_down()

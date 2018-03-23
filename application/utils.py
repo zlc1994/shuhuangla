@@ -15,17 +15,17 @@ class CollaborativeFiltering(object):
         self.user_data = {}
         self.app = app
 
-        self.app.app_context().push()
         self.load()
 
     def load(self):
         # load from db
-        for comment in Comment.query.all():
-            self.book_data.setdefault(comment.book.book_id, {})
-            self.user_data.setdefault(comment.user_id, {'total': 0, 'count': 0})
-            self.book_data[comment.book.book_id][comment.user_id] = comment.score
-            self.user_data[comment.user_id]['total'] += comment.score
-            self.user_data[comment.user_id]['count'] += 1
+        with self.app.app_context():
+            for comment in Comment.query.all():
+                self.book_data.setdefault(comment.book.book_id, {})
+                self.user_data.setdefault(comment.user_id, {'total': 0, 'count': 0})
+                self.book_data[comment.book.book_id][comment.user_id] = comment.score
+                self.user_data[comment.user_id]['total'] += comment.score
+                self.user_data[comment.user_id]['count'] += 1
 
         # load from csv
 
@@ -84,17 +84,16 @@ class CollaborativeFiltering(object):
         return res[:top_n]
 
     def save(self):
-        r.flushdb()
-        for book in Book.query.all():
-            if book.book_id not in self.book_data:
-                continue
-            for si, si_book in self.top_matches(book.book_id):
-                b = Book.query.filter(Book.book_id == si_book).first()
-                if b:
-                    r.hmset(book.id, {b.id: si})
+        with self.app.app_context():
+            r.flushdb()
+            for book in Book.query.all():
+                if book.book_id not in self.book_data:
+                    continue
+                for si, si_book in self.top_matches(book.book_id):
+                    b = Book.query.filter(Book.book_id == si_book).first()
+                    if b:
+                        r.hmset(book.id, {b.id: si})
 
-    def tear_down(self):
-        self.app.app_context().pop()
 
 
 def qidian_spider(app, url):

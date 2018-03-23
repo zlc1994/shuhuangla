@@ -36,16 +36,18 @@ $ flask shell
 >>> Book.insert_book()
 ```
 
-### 将相似小说结果缓存到Redis
-
-```
-$ python item_cf.py
-```
-
-### 运行rq worker (可选)
+### 运行rq worker
 
 ```bash
-$ rq worker -u "your-redis-uri"
+$ rq worker email -u "your-redis-uri"
+$ rq worker spider -u "your-redis-uri"
+$ rq worker cf -u "your-redis-uri"
+```
+
+### 计算相似小说结果
+
+```
+$ python run_tasks.py
 ```
 
 ### 运行服务器
