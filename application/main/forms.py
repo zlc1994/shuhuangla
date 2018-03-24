@@ -15,5 +15,6 @@ class SubmitNewBookForm(FlaskForm):
     submit = SubmitField('提交')
 
     def validate_url(self, url):
-        if 'qidian.com' not in url.data:
+        domains = ['qidian.com', 'zongheng.com']
+        if not any([domain in url.data for domain in domains]):
             raise ValidationError('暂不支持该网站')

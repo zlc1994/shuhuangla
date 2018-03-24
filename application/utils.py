@@ -95,7 +95,6 @@ class CollaborativeFiltering(object):
                         r.hmset(book.id, {b.id: si})
 
 
-
 def qidian_spider(app, url):
     book_id = re.search('\d+', url)
     if book_id is None:
@@ -162,6 +161,70 @@ def qidian_spider(app, url):
                 source='起点中文网',
                 pc_url=pc_url,
                 m_url=url
+            )
+            db.session.add(book)
+        db.session.commit()
+
+
+def zongheng_spider(app, url):
+    book_id = re.search('\d+', url)
+    if book_id is None:
+        return
+    book_id = book_id.group(0)
+
+    url = 'http://book.zongheng.com/book/{}.html'.format(book_id)
+
+    # extract book detail
+    r = requests.get(url)
+    if r.status_code != 200:
+        return
+
+    soup = BeautifulSoup(r.text, 'lxml')
+
+    cover = soup.find('div', class_='book_cover fl').a.img.get('src')
+    bookname = soup.find('div', class_='status fl').h1.a.text
+    author = soup.find('div', class_='booksub').find_all('a')[0].text
+    tag = soup.find('div', class_='booksub').find_all('a')[1].text
+    words = int(soup.find('div', class_='booksub').span.text)
+    intro = soup.find('div', class_='info_con').text
+
+    pc_url = 'http://book.zongheng.com/showchapter/{}.html'.format(book_id)
+
+    r = requests.get(pc_url)
+    soup = BeautifulSoup(r.text, 'lxml')
+
+    chapters_lists = soup.find_all('td')
+    chapter_id = chapters_lists[-1].get('chapterid')
+    last_chapter = chapters_lists[-1].get('chaptername')
+
+    r = requests.get('http://book.zongheng.com/chapter/{0}/{1}.html'.format(book_id, chapter_id))
+    soup = BeautifulSoup(r.text, 'lxml')
+
+    last_update = arrow.get(soup.find('span', {'itemprop': 'dateModified'}).text, 'YY-MM-DD HH:mm:ss')
+
+    with app.app_context():
+        book = Book.query.filter_by(pc_url=pc_url).first()
+
+        if book:
+            book.cover = cover
+            book.chapters = len(chapters_lists)
+            book.words = words
+            book.last_update = last_update
+            book.tag = tag
+        else:
+            book = Book(
+                bookname=bookname,
+                author=author,
+                tag=tag,
+                intro=intro,
+                chapters=len(chapters_lists),
+                words=words,
+                last_update=last_update,
+                last_chapter=last_chapter,
+                cover=cover,
+                source='纵横中文网',
+                pc_url=pc_url,
+                m_url='https://m.zongheng.com/h5/book?bookid={}'.format(book_id)
             )
             db.session.add(book)
         db.session.commit()
