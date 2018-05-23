@@ -7,8 +7,10 @@ class SettingForm(FlaskForm):
     about_me = TextAreaField('签名', validators=[Length(0, 140)])
     save = SubmitField('保存')
 
+
 class SearchForm(FlaskForm):
     q = StringField(validators=[DataRequired()])
+
 
 class SubmitNewBookForm(FlaskForm):
     url = StringField('网址', validators=[DataRequired()])

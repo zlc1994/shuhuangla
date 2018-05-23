@@ -2,9 +2,13 @@ from application import create_app, db
 from application.models import User, Book, Comment
 from flask import url_for
 import os
+import config
 
 
-app = create_app()
+if os.environ.get('MODE') == 'production':
+    app = create_app()
+else:
+    app = create_app(config.DevelopConfig)
 
 
 @app.context_processor
@@ -28,4 +32,4 @@ def make_shell_context():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run()

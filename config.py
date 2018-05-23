@@ -9,8 +9,7 @@ class Config(object):
     CSV = os.path.join(basedir, 'comments.csv')
 
     # for database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'mysql+pymysql://zlc:1@localhost/shuhuang?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BOOK_INFO = os.path.join(basedir, 'items.json')
     REDIS_URL = "redis://localhost:6379/0"
@@ -23,6 +22,16 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['2499518552@qq.com', '657386160@qq.com']
+    
+
+class DevelopConfig(Config):
+    DEBUG = True
+    # for database
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'mysql+pymysql://zlc:1@localhost/shuhuang'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    REDIS_URL = "redis://localhost:6379/0"
+    RQ_REDIS_URL = "redis://localhost:6379/1"
 
 
 class EmailJobConfig(Config):
