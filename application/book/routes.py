@@ -1,6 +1,6 @@
 from flask import request, render_template
 
-from application import r
+import redis
 from application.models import Book, Comment
 from . import bp
 from .forms import CommentForm
@@ -35,6 +35,7 @@ def same_author(book_id):
 
 @bp.route('/<int:book_id>/similar_books')
 def similar_books(book_id):
+    r = redis.StrictRedis(host='sg2', db=3, decode_responses=True)
     form = CommentForm()
     book = Book.query.get_or_404(book_id)
     res = r.hgetall(book_id)
