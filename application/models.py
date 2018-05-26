@@ -1,11 +1,10 @@
 from application import db, login
 from config import Config
 import arrow
-from sqlalchemy_utils import ArrowType
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5
-import json
 import re
 import time
 import jwt
@@ -23,8 +22,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     about_me = db.Column(db.String(140))
-    last_seen = db.Column(ArrowType, default=arrow.utcnow)
-    join_time = db.Column(ArrowType, default=arrow.utcnow)
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    join_time = db.Column(db.DateTime, default=datetime.utcnow)
     comments = db.relationship('Comment', backref='user', lazy='dynamic')
     followed = db.relationship(
         'User', secondary=followers,
@@ -77,8 +76,6 @@ class User(UserMixin, db.Model):
                 followers.c.follower_id == self.id).order_by(
                     Comment.timestamp.desc())
     
-    
-
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -93,7 +90,7 @@ class Book(db.Model):
     m_url = db.Column(db.Text())
     source = db.Column(db.String(64))
     intro = db.Column(db.Text())
-    last_update = db.Column(ArrowType, index=True)
+    last_update = db.Column(db.DateTime, index=True)
     last_chapter = db.Column(db.String(256))
     avg = db.Column(db.Float, default=0.0)
     comments = db.relationship('Comment', backref='book', lazy='dynamic')
@@ -140,13 +137,11 @@ class Book(db.Model):
             self.avg = total/count
 
 
-
-
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text())
     score = db.Column(db.Integer)
-    timestamp = db.Column(ArrowType, index=True, default=arrow.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
 
