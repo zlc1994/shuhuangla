@@ -28,7 +28,7 @@ class DevelopConfig(Config):
     DEBUG = True
     # for database
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'mysql+pymysql://zlc:1@localhost/shuhuang'
+        'mysql+pymysql://zlc:foo@sg2/shuhuang'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     REDIS_URL = "redis://localhost:6379/0"
     RQ_REDIS_URL = "redis://localhost:6379/1"

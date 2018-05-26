@@ -1,44 +1,42 @@
-import requests
-from application import db
-from bs4 import BeautifulSoup
-import re
 import json
+import re
+
 import arrow
-import csv
+import pymongo
+import redis
+import requests
+from bs4 import BeautifulSoup
+
+from application import db
 from application.models import Comment, Book
-from application import r
 
 
 class CollaborativeFiltering(object):
-    def __init__(self, app):
+    def __init__(self):
         self.book_data = {}
         self.user_data = {}
-        self.app = app
+        self.client = pymongo.MongoClient()
+        self.db = self.client['items']
 
         self.load()
 
     def load(self):
         # load from db
-        with self.app.app_context():
-            for comment in Comment.query.all():
-                self.book_data.setdefault(comment.book.book_id, {})
-                self.user_data.setdefault(comment.user_id, {'total': 0, 'count': 0})
-                self.book_data[comment.book.book_id][comment.user_id] = comment.score
-                self.user_data[comment.user_id]['total'] += comment.score
-                self.user_data[comment.user_id]['count'] += 1
+        # with self.app.app_context():
+        #     for comment in Comment.query.all():
+        #         self.book_data.setdefault(comment.book.book_id, {})
+        #         self.user_data.setdefault(comment.user_id, {'total': 0, 'count': 0})
+        #         self.book_data[comment.book.book_id][comment.user_id] = comment.score
+        #         self.user_data[comment.user_id]['total'] += comment.score
+        #         self.user_data[comment.user_id]['count'] += 1
 
-        # load from csv
-
-        with open(self.app.config['CSV'], 'r',  newline='') as f:
-            fieldnames = ['user_id', 'book_id', 'rate']
-            reader = csv.DictReader(f, fieldnames=fieldnames)
-            next(reader, None)  # skip the headers
-            for row in reader:
-                self.book_data.setdefault(row['book_id'], {})
-                self.user_data.setdefault(row['user_id'], {'total': 0, 'count': 0})
-                self.book_data[row['book_id']][row['user_id']] = int(row['rate'])
-                self.user_data[row['user_id']]['total'] += int(row['rate'])
-                self.user_data[row['user_id']]['count'] += 1
+        # load from mongo
+        for row in self.db['comments'].find():
+            self.book_data.setdefault(row['book_id'], {})
+            self.user_data.setdefault(row['user_id'], {'total': 0, 'count': 0})
+            self.book_data[row['book_id']][row['user_id']] = int(row['rate'])
+            self.user_data[row['user_id']]['total'] += int(row['rate'])
+            self.user_data[row['user_id']]['count'] += 1
 
     def similarity(self, u, v):
         common = {}
@@ -47,14 +45,7 @@ class CollaborativeFiltering(object):
             if user in self.book_data[v]:
                 common[user] = 1
 
-        l = len(common)
-
-        if not l:
-            return 0
-        elif l > 50:
-            factor = 1
-        else:
-            factor = l / 50
+        n = len(common)
 
         len_u = sum([(self.book_data[u][i] - self.user_data[i]['total'] / self.user_data[i]['count']) ** 2 for i in common]) ** 0.5
         len_v = sum([(self.book_data[v][i] - self.user_data[i]['total'] / self.user_data[i]['count']) ** 2 for i in common]) ** 0.5
@@ -69,7 +60,7 @@ class CollaborativeFiltering(object):
             bias = self.user_data[i]['total'] / self.user_data[i]['count']
             dot += (self.book_data[u][i] - bias) * (self.book_data[v][i] - bias)
 
-        return factor * dot / den
+        return min(1.0, n/50) * dot / den
 
     def top_matches(self, book_id, top_n=20):
         res = []
@@ -84,15 +75,15 @@ class CollaborativeFiltering(object):
         return res[:top_n]
 
     def save(self):
-        with self.app.app_context():
-            r.flushdb()
-            for book in Book.query.all():
-                if book.book_id not in self.book_data:
-                    continue
-                for si, si_book in self.top_matches(book.book_id):
-                    b = Book.query.filter(Book.book_id == si_book).first()
-                    if b:
-                        r.hmset(book.id, {b.id: si})
+        r = redis.StrictRedis(host='sg', db=3, decode_responses=True)
+        r.flushdb()
+        for book in Book.query.all():
+            if book.book_id not in self.book_data:
+                continue
+            for si, si_book in self.top_matches(book.book_id):
+                b = Book.query.filter(Book.book_id == si_book).first()
+                if b:
+                    r.hmset(book.id, {b.id: si})
 
 
 def qidian_spider(app, url):

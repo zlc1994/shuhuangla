@@ -33,7 +33,7 @@ def upgrade():
     sa.Column('source', sa.String(length=64), nullable=True),
     sa.Column('intro', sa.Text(), nullable=True),
     sa.Column('last_update', sqlalchemy_utils.types.arrow.ArrowType(), nullable=True),
-    sa.Column('last_chapter', sa.String(length=64), nullable=True),
+    sa.Column('last_chapter', sa.String(length=256), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_book_author'), 'book', ['author'], unique=False)

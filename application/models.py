@@ -94,7 +94,7 @@ class Book(db.Model):
     source = db.Column(db.String(64))
     intro = db.Column(db.Text())
     last_update = db.Column(ArrowType, index=True)
-    last_chapter = db.Column(db.String(64))
+    last_chapter = db.Column(db.String(256))
     avg = db.Column(db.Float, default=0.0)
     comments = db.relationship('Comment', backref='book', lazy='dynamic')
 
@@ -103,25 +103,27 @@ class Book(db.Model):
 
     @staticmethod
     def insert_book():
-        with open(Config.BOOK_INFO, 'r') as f:
-            for line in f:
-                item = json.loads(line.strip())
-                b = Book(
-                    bookname=item['name'],
-                    book_id=item['book_id'],
-                    chapters=int(re.search('\d+', item['chapters']).group(0)),
-                    words=int(re.search('\d+', item['words']).group(0)),
-                    author=item['author'],
-                    tag=item['tag'],
-                    cover=item['cover'],
-                    pc_url=item['pc_url'],
-                    m_url=item['m_url'],
-                    source=item['source'],
-                    intro=item['intro'],
-                    last_update=arrow.get(item['last_update'], 'YY/MM/DD HHmm').replace(tzinfo='Asia/Shanghai'),
-                    last_chapter=item['last_chapter']
-                )
+        import pymongo
+        client = pymongo.MongoClient(host='sg2')
+        m_db = client['items']
+        for item in m_db['books'].find():
+            if len(item) == 14:
                 try:
+                    b = Book(
+                        bookname=item['name'],
+                        book_id=item['book_id'],
+                        chapters=int(re.search('\d+', item['chapters']).group(0)),
+                        words=int(re.search('\d+', item['words']).group(0)),
+                        author=item['author'],
+                        tag=item['tag'],
+                        cover=item['cover'],
+                        pc_url=item['pc_url'],
+                        m_url=item['m_url'],
+                        source=item['source'],
+                        intro=item['info'],
+                        last_update=arrow.get(item['last_update'], 'YY/MM/DD HH:mm').replace(tzinfo='Asia/Shanghai'),
+                        last_chapter=item['last_chapter']
+                    )
                     db.session.add(b)
                     db.session.commit()
                 except Exception as e:
