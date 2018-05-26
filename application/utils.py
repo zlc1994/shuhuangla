@@ -3,16 +3,15 @@ import re
 
 import arrow
 import pymongo
-import redis
 import requests
 from bs4 import BeautifulSoup
 
-from application import db
+from application import db, r
 from application.models import Comment, Book
 
 
 class CollaborativeFiltering(object):
-    def __init__(self):
+    def __init__(self, app):
         self.book_data = {}
         self.user_data = {}
         self.client = pymongo.MongoClient()
@@ -22,13 +21,13 @@ class CollaborativeFiltering(object):
 
     def load(self):
         # load from db
-        # with self.app.app_context():
-        #     for comment in Comment.query.all():
-        #         self.book_data.setdefault(comment.book.book_id, {})
-        #         self.user_data.setdefault(comment.user_id, {'total': 0, 'count': 0})
-        #         self.book_data[comment.book.book_id][comment.user_id] = comment.score
-        #         self.user_data[comment.user_id]['total'] += comment.score
-        #         self.user_data[comment.user_id]['count'] += 1
+        with self.app.app_context():
+            for comment in Comment.query.all():
+                self.book_data.setdefault(comment.book.book_id, {})
+                self.user_data.setdefault(comment.user_id, {'total': 0, 'count': 0})
+                self.book_data[comment.book.book_id][comment.user_id] = comment.score
+                self.user_data[comment.user_id]['total'] += comment.score
+                self.user_data[comment.user_id]['count'] += 1
 
         # load from mongo
         for row in self.db['comments'].find():
@@ -75,15 +74,15 @@ class CollaborativeFiltering(object):
         return res[:top_n]
 
     def save(self):
-        r = redis.StrictRedis(host='sg', db=3, decode_responses=True)
-        r.flushdb()
-        for book in Book.query.all():
-            if book.book_id not in self.book_data:
-                continue
-            for si, si_book in self.top_matches(book.book_id):
-                b = Book.query.filter(Book.book_id == si_book).first()
-                if b:
-                    r.hmset(book.id, {b.id: si})
+        with self.app.app_context():
+            r.flushdb()
+            for book in Book.query.all():
+                if book.book_id not in self.book_data:
+                    continue
+                for si, si_book in self.top_matches(book.book_id):
+                    b = Book.query.filter(Book.book_id == si_book).first()
+                    if b:
+                        r.hmset(book.id, {b.id: si})
 
 
 def qidian_spider(app, url):

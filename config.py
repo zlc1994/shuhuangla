@@ -12,8 +12,8 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BOOK_INFO = os.path.join(basedir, 'items.json')
-    REDIS_URL = "redis://localhost:6379/0"
-    RQ_REDIS_URL = "redis://localhost:6379/1"
+    REDIS_URL = "redis://sg2:6379/1"
+    RQ_REDIS_URL = "redis://sg2:6379/2"
 
     # for email
     MAIL_SERVER = 'smtp.qq.com'
@@ -30,8 +30,8 @@ class DevelopConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'mysql+pymysql://zlc:foo@sg2/shuhuang'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    REDIS_URL = "redis://localhost:6379/0"
-    RQ_REDIS_URL = "redis://localhost:6379/1"
+    REDIS_URL = "redis://sg2:6379/1"
+    RQ_REDIS_URL = "redis://sg2:6379/2"
 
 
 class EmailJobConfig(Config):
