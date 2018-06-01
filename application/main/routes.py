@@ -184,7 +184,7 @@ def guess_you_like():
         if total_si[item] and total_sum[item] / total_si[item] >= 3:
             rec.append((total_sum[item] / total_si[item], Book.query.get(item)))
 
-    rec = sorted(rec, key=lambda x: x[0])
+    rec = sorted(rec, key=lambda x: x[0], reverse=True)
     rec = rec[:20]
 
     return render_template('guess_you_like.html', rec=rec, total_books=total_books, total_users=total_users,
