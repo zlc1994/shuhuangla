@@ -106,24 +106,36 @@ class Book(db.Model):
         for item in m_db['books'].find():
             if len(item) == 14:
                 try:
-                    hit = Book.query.filter_by(book_id=item['book_id']).first()
-                    b = Book(
-                        bookname=item['name'],
-                        book_id=item['book_id'],
-                        chapters=int(re.search('\d+', item['chapters']).group(0)),
-                        words=int(re.search('\d+', item['words']).group(0)),
-                        author=item['author'],
-                        tag=item['tag'],
-                        cover=item['cover'],
-                        pc_url=item['pc_url'],
-                        m_url=item['m_url'],
-                        source=item['source'],
-                        intro=item['info'],
-                        last_update=arrow.get(item['last_update'], 'YY/MM/DD HH:mm').replace(tzinfo='Asia/Shanghai'),
-                        last_chapter=item['last_chapter']
-                    )
-                    if hit:
-                        b.id = hit.id
+                    b = Book.query.filter_by(book_id=item['book_id']).first()
+                    if b:
+                        b.bookname = item['name'],
+                        b.chapters = int(re.search('\d+', item['chapters']).group(0)),
+                        b.words = int(re.search('\d+', item['words']).group(0)),
+                        b.author = item['author'],
+                        b.tag = item['tag'],
+                        b.cover = item['cover'],
+                        b.pc_url = item['pc_url'],
+                        b.m_url = item['m_url'],
+                        b.source = item['source'],
+                        b.intro = item['info'],
+                        b.last_update = arrow.get(item['last_update'], 'YY/MM/DD HH:mm').replace(tzinfo='Asia/Shanghai'),
+                        b.last_chapter = item['last_chapter']
+                    else:
+                        b = Book(
+                            bookname=item['name'],
+                            book_id=item['book_id'],
+                            chapters=int(re.search('\d+', item['chapters']).group(0)),
+                            words=int(re.search('\d+', item['words']).group(0)),
+                            author=item['author'],
+                            tag=item['tag'],
+                            cover=item['cover'],
+                            pc_url=item['pc_url'],
+                            m_url=item['m_url'],
+                            source=item['source'],
+                            intro=item['info'],
+                            last_update=arrow.get(item['last_update'], 'YY/MM/DD HH:mm').replace(tzinfo='Asia/Shanghai'),
+                            last_chapter=item['last_chapter']
+                        )
                     db.session.add(b)
                     db.session.commit()
                 except Exception as e:
