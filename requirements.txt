@@ -17,7 +17,7 @@ cssselect==1.0.3
 decorator==4.2.1
 elasticsearch==6.1.1
 Faker==0.8.12
-Flask==0.12.2
+Flask==1.0
 Flask-JWT==0.3.2
 Flask-Login==0.4.1
 Flask-Mail==0.9.1
